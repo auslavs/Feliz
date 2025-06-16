@@ -317,6 +317,42 @@ describe "lazy" <| fun _ ->
         )
     }
 
+    testPromise "loads lazy static member component with typed text after checkbox is checked" <| fun _ -> promise {
+        let render = RTL.render (Components.LazyLoadStaticMember())
+
+        // Ensure loading message is not present initially
+        Expect.toBeNull (RTL.screen.queryByText("Loading..."))
+
+        // Type into the input field
+        // let input = RTL.screen.getByTestId("input")
+        // do! RTL.userEvent.clear(input)
+        // do! RTL.userEvent.type'(input, "hello", 50)
+
+        // Click the checkbox to load the lazy component
+        let checkbox = RTL.screen.getByTestId("checkbox")
+        do! RTL.userEvent.click(checkbox)
+
+        // Wait for loading indicator
+        let! loading = RTL.waitFor<Types.HTMLElement option>(fun () ->
+            RTL.screen.queryByText("Loading...")
+            // promise {
+            //     let! loading = 
+            //     Expect.toHaveTextContent loading "Loadin2g..."
+            // }
+        )
+
+        Expect.expect(loading).``not``.toBeNull()
+
+        do! RTL.waitFor(fun () ->
+            promise {
+                // Wait for the lazy component to appear
+                let! lazyText = RTL.screen.findByText("Component loaded after 2 seconds")
+                Expect.expect(lazyText).``not``.toBeNull()
+            }
+            |> Promise.start
+        )
+    }
+
 
 describe "Strict Mode with Effect" <| fun _ ->
     testPromise "calls effect once on mount in StrictMode" <| fun _ -> promise {

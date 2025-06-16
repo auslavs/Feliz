@@ -9,6 +9,29 @@ module internal ReactInternal =
 
     [<Import("useEffect", "react")>]
     let useEffect (effect: obj) : unit =  jsNative
+
+
+[<Erase>]
+type ReactLegacy =
+    [<ImportMember("react")>]
+    static member inline createElement(``type``: string, ?props: obj, [<ParamArray>] ?children: ReactElement list): ReactElement = jsNative
+
+    [<ImportMember("react")>]
+    static member inline createElement(``type``: ReactElement, ?props: obj, [<ParamArray>] ?children: ReactElement list): ReactElement = jsNative
+
+    [<ImportMember("react")>]
+    static member inline createElement(``type``: string, ?props: obj, ?children: ReactElement): ReactElement = jsNative
+
+    [<ImportMember("react")>]
+    static member inline createElement(``type``: ReactElement, ?props: obj, ?children: ReactElement): ReactElement = jsNative
+
+    [<ImportMember("react")>]
+    static member inline createElement(``type``: string, ?props: obj, ?children: string): ReactElement = jsNative
+
+    [<ImportMember("react")>]
+    static member inline forwardRef(render: 'props * IRefValue<'t> -> ReactElement): ('props * IRefValue<'t> -> ReactElement) = jsNative
+
+
 [<Erase>]
 type React =
 
@@ -476,7 +499,7 @@ useLayoutEffect(() => {
     ///  Where you would then pass in `fun () -> asyncComponent`.
     /// </param>
     [<Import("lazy", "react")>]
-    static member inline lazy'<'props>(load: unit -> JS.Promise<'props -> ReactElement>): 'props -> ReactElement = jsNative
+    static member inline lazy'<'props>(load: unit -> JS.Promise<'props -> ReactElement>): LazyComponent<'props> = jsNative
 
     /// <summary>
     /// Lets you define a component that is loaded dynamically. Which helps with code splitting.
@@ -488,9 +511,59 @@ useLayoutEffect(() => {
     ///
     ///  Where you would then pass in `fun () -> asyncComponent`.
     /// </param>
-    [<Import("lazy", "react")>]
-    static member inline lazy'<'props>(load: Async<'props -> ReactElement>): 'props -> ReactElement = 
+    static member inline lazy'<'props>(load: Async<'props -> ReactElement>): LazyComponent<'props> = 
         React.lazy' (fun () -> load |> Async.StartAsPromise)
+
+    /// <summary>
+    /// This is a Feliz helper function to call a lazy loaded component.
+    /// 
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// ```fsharp
+    /// let ComponentLazy: {|text: string|} -> ReactElement = 
+    ///     React.lazy'(fun () ->
+    ///         importDynamic "./LazyComponent.jsx"
+    ///     )
+    /// ```
+    /// 
+    /// Can be calles like this:
+    /// 
+    /// ```fsharp
+    /// React.lazyRender(ComponentLazy, {|text = "Hello"|})
+    /// ```
+    /// 
+    /// </remarks>
+    static member inline lazyRender<'props>(lazyComponent: LazyComponent<'props>, props: 'props): ReactElement =
+        ReactLegacy.createElement(
+            unbox<ReactElement> lazyComponent,
+            props
+        )
+
+    /// <summary>
+    /// This is a Feliz helper function to call a lazy loaded component.
+    /// 
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// ```fsharp
+    /// let ComponentLazy: {|text: string|} -> ReactElement = 
+    ///     React.lazy'(fun () ->
+    ///         importDynamic "./LazyComponent.jsx"
+    ///     )
+    /// ```
+    /// 
+    /// Can be calles like this:
+    /// 
+    /// ```fsharp
+    /// React.lazyRender(ComponentLazy, {|text = "Hello"|})
+    /// ```
+    /// 
+    /// </remarks>
+    static member inline lazyRender(lazyComponent: LazyComponent<unit>): ReactElement =
+        ReactLegacy.createElement(
+            unbox<ReactElement> lazyComponent
+        )
 
     /// <summary>
     /// Lets you specify a loading indicator whenever a child element is not yet ready
@@ -610,24 +683,3 @@ module ReactExtensions =
                 disposables
                 |> Array.iter (fun d -> d.current |> Option.iter (fun d -> d.Dispose()))
             )
-
-[<Erase>]
-type ReactLegacy =
-    [<ImportMember("react")>]
-    static member inline createElement(``type``: string, ?props: obj, [<ParamArray>] ?children: ReactElement list): ReactElement = jsNative
-
-    [<ImportMember("react")>]
-    static member inline createElement(``type``: ReactElement, ?props: obj, [<ParamArray>] ?children: ReactElement list): ReactElement = jsNative
-
-    [<ImportMember("react")>]
-    static member inline createElement(``type``: string, ?props: obj, ?children: ReactElement): ReactElement = jsNative
-
-    [<ImportMember("react")>]
-    static member inline createElement(``type``: ReactElement, ?props: obj, ?children: ReactElement): ReactElement = jsNative
-
-    [<ImportMember("react")>]
-    static member inline createElement(``type``: string, ?props: obj, ?children: string): ReactElement = jsNative
-
-    [<ImportMember("react")>]
-    static member inline forwardRef(render: 'props * IRefValue<'t> -> ReactElement): ('props * IRefValue<'t> -> ReactElement) = jsNative
-

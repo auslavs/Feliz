@@ -31,7 +31,7 @@ let DuspenseCompInner() =
 
 let asyncComponent : JS.Promise<unit -> ReactElement> = JsInterop.importDynamic "./CodeSplitting.fs"
 
-let LazyComponent: unit -> ReactElement =
+let LazyComponent: LazyComponent<unit> =
     React.lazy'(fun () -> promise {
         do! Promise.sleep 1000
         return! asyncComponent
@@ -56,7 +56,7 @@ let DelaySuspenseComp () =
         ]
 
         delaySuspense.children [
-            unbox (JSX.create LazyComponent [])
+            React.lazyRender LazyComponent
         ]
     ]
 

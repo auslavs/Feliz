@@ -3,13 +3,13 @@
 open Feliz
 open Browser.Dom
 
-[<ReactComponent>]
+[<Fable.Core.JSX.ComponentAttribute>]
 let View() =
     Html.div [
         Components.Components.LazyLoad()
     ]
 
-let root = ReactDOM.createRoot(document.getElementById "root")
+let private root = ReactDOM.createRoot(document.getElementById "root")
 root.render(View())
 
 

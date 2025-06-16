@@ -8,7 +8,20 @@ module TestContext =
 
     let MyContext = React.createContext<{|state: string; setState: string -> unit|}>()
 
-    let LazyLoadComponent: {|text: string option|} -> ReactElement = 
+
+[<Erase; Mangle(false)>]
+module TestLazyComponent =
+
+    let LazyLoadComponent: LazyComponent<{|text: string|}> = 
+        React.lazy'(fun () ->
+            promise {
+                do! Promise.sleep 2000
+                return! Fable.Core.JsInterop.importDynamic "./CodeSplitting.jsx"
+            }
+        )
+
+type TestLazyComponentStaticMember =
+    static member LazyLoadComponent = 
         React.lazy'(fun () ->
             promise {
                 do! Promise.sleep 2000
@@ -266,7 +279,35 @@ type Components =
                     fallback = Html.div [ prop.testId "loading"; prop.text "Loading..." ],
                     children = [
                         Html.h1 "Preview"
-                        unbox (JSX.create TestContext.LazyLoadComponent ["text", text])
+                        React.lazyRender(TestLazyComponent.LazyLoadComponent, {|text = text|})
+                    ]
+                )
+        ]
+
+    [<ReactComponent>]
+    static member LazyLoadStaticMember() =
+        let showPreview, setShowPreview = React.useState(false)
+        let text, setText = React.useState("Component loaded after 2 seconds")
+        Html.div [
+            Html.input [
+                prop.testId "input"
+                prop.value text
+                prop.onChange (fun (e: string) -> setText(e))
+            ]
+            Html.label [
+                Html.input [
+                    prop.testId "checkbox"
+                    prop.type' "checkbox"
+                    prop.onChange (fun (e: bool) -> setShowPreview(e))
+                ]
+                Html.text "Load Component"
+            ]
+            if showPreview then
+                React.Suspense(
+                    fallback = Html.div [ prop.testId "loading"; prop.text "Loading..." ],
+                    children = [
+                        Html.h1 "Preview"
+                        React.lazyRender(TestLazyComponentStaticMember.LazyLoadComponent, {|text = text|})
                     ]
                 )
         ]
