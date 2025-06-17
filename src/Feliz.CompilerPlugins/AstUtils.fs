@@ -9,9 +9,9 @@ open System.Text.RegularExpressions
 let cleanFullDisplayName str =
     Regex.Replace(str, @"`\d+", "").Replace(".", "_")
 
-let makeIdent name: Fable.Ident =
+let makeIdent _type name: Fable.Ident =
     { Name = name
-      Type = Fable.Any
+      Type = _type
       IsCompilerGenerated = true
       IsThisArgument = false
       IsMutable = false
@@ -22,7 +22,7 @@ let makeUniqueIdent (name: string) =
         if i < 0
         then "Z" + (abs i).ToString("X")
         else i.ToString("X")
-    "$" + name + (Guid.NewGuid().GetHashCode() |> hashToString) |> makeIdent
+    "$" + name + (Guid.NewGuid().GetHashCode() |> hashToString) |> makeIdent Fable.Type.Any
 
 let makeValue r value =
     Fable.Value(value, r)
@@ -164,3 +164,13 @@ let camelCase (input: string) =
     if String.IsNullOrWhiteSpace input
     then ""
     else input.First().ToString().ToLower() + String.Join("", input.Skip(1))
+
+let withTag tag =
+    function
+    | Fable.Call(e, i, t, r) -> Fable.Call(e, { i with Tags = tag :: i.Tags }, t, r)
+    | Fable.Get(e, Fable.FieldGet i, t, r) -> Fable.Get(e, Fable.FieldGet { i with Tags = tag :: i.Tags }, t, r)
+    | Fable.Operation(op, tags, t, r) -> Fable.Operation(op, tag :: tags, t, r)
+    | e -> e
+
+let withJSXTag =
+    withTag "jsx"

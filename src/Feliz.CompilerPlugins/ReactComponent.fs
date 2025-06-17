@@ -55,7 +55,7 @@ open ReactComponentHelpers
 /// <summary>Transforms a function into a React function component. Make sure the function is defined at the module level</summary>
 type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from:string, ?memo: bool) =
     inherit MemberDeclarationPluginAttribute()
-    override _.FableMinimumVersion = "4.0"
+    override _.FableMinimumVersion = "5.0"
     new() = ReactComponentAttribute(exportDefault=false)
     new(exportDefault: bool) = ReactComponentAttribute(exportDefault=exportDefault,?import=None, ?from=None)
     new(import: string, from: string) = ReactComponentAttribute(exportDefault=false,import=import, from=from)
@@ -194,7 +194,12 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from:string
             else
                 // rewrite all other arguments into getters of a single props object
                 // TODO: transform any callback into into useCallback(callback) to stabilize reference
-                let propsArg = AstUtils.makeIdent (sprintf "%sInputProps" (AstUtils.camelCase decl.Name))
+                let propsArg =
+                    let type_ =
+                        let fieldNames, genericArgs = decl.Args |> List.map (fun arg -> arg.DisplayName, arg.Type) |> List.unzip
+                        Fable.Type.AnonymousRecordType(Array.ofList fieldNames, genericArgs, false)
+                    let name = sprintf "%sInputProps" (AstUtils.camelCase decl.Name)
+                    AstUtils.makeIdent type_ name 
                 let propBindings =
                     ([], decl.Args) ||> List.fold (fun bindings arg ->
                         let getterKey = if arg.DisplayName = "key" then "$key" else arg.DisplayName

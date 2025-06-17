@@ -29,7 +29,8 @@ module UseElmish =
         | Increment -> state + 1, Cmd.none
         | IncrementAgain -> state + 1, Cmd.ofMsg Increment
 
-    let render = React.functionComponent(fun (props: {| subtitle: string |}) ->
+    [<ReactComponent>]
+    let render (props: {| subtitle: string |}) =
         let state, dispatch = React.useElmish(init, update, [|box props.subtitle|])
 
         Html.div [
@@ -52,9 +53,10 @@ module UseElmish =
                 prop.testId "increment-again"
             ]
 
-        ])
+        ]
 
-    let wrapper = React.functionComponent(fun () ->
+    [<ReactComponent>]
+    let wrapper () =
         let count, setCount = React.useState 0
         Html.div [
             Html.button [
@@ -63,7 +65,7 @@ module UseElmish =
                 prop.testId "increment-wrapper"
             ]
             render {| subtitle = if count < 2 then "foo" else "bar" |}
-        ])
+        ]
 
 describe "UseElmish" <| fun () ->
     testPromise "useElmish works" <| fun () -> promise {
@@ -74,8 +76,9 @@ describe "UseElmish" <| fun () ->
         do! RTL.userEvent.click(render.getByTestId("increment"))
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "1" // "Should have been incremented"
+            )
         }
 
     // See https://github.com/fable-compiler/fable-promise/issues/24#issuecomment-934328900
@@ -87,10 +90,10 @@ describe "UseElmish" <| fun () ->
         render.getByTestId("increment-again").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "2" //"Should have been incremented twice"
-
-    }
+            )
+        }
 
     testPromise "useElmish works with dependencies" <| fun () -> promise {
         let render = RTL.render(UseElmish.wrapper())
@@ -100,48 +103,48 @@ describe "UseElmish" <| fun () ->
         render.getByTestId("increment").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "1" //"Should have been incremented"
-
+            )
 
         render.getByTestId("increment-wrapper").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "1" //"State should be same because dependency hasn't changed"
-
+            )
 
         render.getByTestId("increment-wrapper").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "0" //"State should have been reset because dependency has changed"
-
+            )
     }
 
     testPromise "useElmish works with React.strictMode" <| fun () -> promise {
-        let render = RTL.render(React.strictMode [ UseElmish.wrapper() ])
+        let render = RTL.render(React.StrictMode [ UseElmish.wrapper() ])
 
         Expect.toHaveTextContent (render.getByTestId("count")) "0" //"Should be initial state"
 
         render.getByTestId("increment").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "1" //"Should have been incremented"
-
+            )
 
         render.getByTestId("increment-wrapper").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "1" //"State should be same because dependency hasn't changed"
-
+            )
 
         render.getByTestId("increment-wrapper").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "0" //"State should have been reset because dependency has changed"
-
+            )
     }
