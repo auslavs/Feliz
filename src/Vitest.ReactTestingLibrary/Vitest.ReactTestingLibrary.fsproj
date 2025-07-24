@@ -18,4 +18,14 @@
     <ProjectReference Include="..\Feliz\Feliz.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="*.fsproj; *.fs;" Exclude="**\*.fs.js" PackagePath="fable\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NpmDependencies>
+        <NpmPackage Name="@testing-library/react" Version="gt 16.0.0 lt 17.0.0" ResolutionStrategy="Max" />
+    </NpmDependencies>
+  </PropertyGroup>
+
 </Project>

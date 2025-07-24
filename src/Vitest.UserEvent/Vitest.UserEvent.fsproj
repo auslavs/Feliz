@@ -15,4 +15,14 @@
     <PackageReference Include="Fable.Promise" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="*.fsproj; *.fs;" Exclude="**\*.fs.js" PackagePath="fable\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NpmDependencies>
+        <NpmPackage Name="@testing-library/user-event" Version="gt 14.0.0 lt 15.0.0" ResolutionStrategy="Max" />
+    </NpmDependencies>
+  </PropertyGroup>
+
 </Project>

@@ -205,7 +205,7 @@ Vitest.describe("TextContext", fun () ->
 
     Vitest.test("sum adds two numbers with context", fun (ctx: TestContext) -> 
         ctx.onTestFinished(fun x ->
-            console.log(x.task.result.state)
+            Browser.Dom.console.log(x.task.result.state)
         )
         let result = Examples.sum 2 3
         ctx.expect(result).toBe(5)

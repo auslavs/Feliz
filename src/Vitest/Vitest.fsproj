@@ -14,4 +14,14 @@
     <PackageReference Include="Fable.Promise" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="*.fsproj; *.fs;" Exclude="**\*.fs.js" PackagePath="fable\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NpmDependencies>
+        <NpmPackage Name="vitest" Version="gt 3.1.0 lt 4.0.0" ResolutionStrategy="Max" />
+    </NpmDependencies>
+  </PropertyGroup>
+
 </Project>

@@ -11,11 +11,6 @@ type AbortSignal = obj
 
 type IVitest = obj
 
-
-module console =
-    [<Emit("console.log($0)")>]
-    let log (msg: obj) = jsNative
-
 [<StringEnum(CaseRules.LowerFirst)>]
 type TypeOf =
     | Bigint
