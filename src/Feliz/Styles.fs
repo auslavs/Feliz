@@ -766,12 +766,12 @@ type style =
     /// which maps to a physical padding properties depending on the element's
     /// writing mode, directionality, and text orientation.
     /// https://developer.mozilla.org/en-US/docs/Web/CSS/padding-inline
-    static member inline paddingInline(value: int) = StyleHelper.mkStyle "marginInline" value
+    static member inline paddingInline(value: int) = StyleHelper.mkStyle "paddingInline" value
     /// Defines the logical inline start and end paddings of an element,
     /// which maps to a physical padding properties depending on the element's
     /// writing mode, directionality, and text orientation.
     /// https://developer.mozilla.org/en-US/docs/Web/CSS/padding-inline
-    static member inline paddingInline(value: ICssUnit) = StyleHelper.mkStyle "marginInline" value
+    static member inline paddingInline(value: ICssUnit) = StyleHelper.mkStyle "paddingInline" value
     /// Defines the logical inline start and end paddings of an element,
     /// which maps to a physical padding properties depending on the element's
     /// writing mode, directionality, and text orientation.
