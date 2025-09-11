@@ -25,6 +25,7 @@
     <Compile Include="Examples/React/FocusInput.fs" />
     <Compile Include="Examples/React/ImperativeHandle.fs" />
     <Compile Include="Examples/React/CodeSplitting.fs" />
+    <Compile Include="Examples/React/UseStateWithUpdater.fs" />
   </ItemGroup>
 
   <!--<ItemGroup>

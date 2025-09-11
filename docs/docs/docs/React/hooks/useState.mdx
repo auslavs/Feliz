@@ -1,0 +1,43 @@
+---
+title: useState
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/useState#usage" name="useState"/>
+
+---
+
+`useState` is a hook that lets you store and update variables for your components. Changes in react states trigger a re-render of the component.
+
+```fsharp
+
+[<ReactComponent>]
+let MyComponent() =
+    let count, setCount = React.useState(42)
+    let result, setResult = React.useState(None: int option)
+
+    // ...
+
+```
+
+import Counter from '../../../feliz-docs/fableoutput/Examples/React/Counter'
+import RawCounter from '!!raw-loader!../../../feliz-docs/Examples/React/Counter.fs'
+
+<ComponentRender code={RawCounter}> 
+  <Counter />
+</ComponentRender>
+
+## useStateWithUpdater
+
+`useStateWithUpdater` is a Feliz specific variant of `useState` that allows you to update the state based on its previous value. In javascript React the setter function is overloaded to accept either a value or an updater function. In F# this is not possible due to the strong typing, so Feliz provides this additional hook.
+
+This is useful when dealing with async information. Such as debounced input or data from remote APIs.
+
+import Updater from '../../../feliz-docs/fableoutput/Examples/React/UseStateWithUpdater'
+import RawUpdater from '!!raw-loader!../../../feliz-docs/Examples/React/UseStateWithUpdater.fs'
+
+<ComponentRender code={RawUpdater}> 
+  <Updater />
+</ComponentRender>  
