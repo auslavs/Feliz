@@ -1,5 +1,9 @@
 {
   "label": "React",
   "collapsible": false,
-  "position": 999
+  "position": 999,
+  "link": {
+    "type": "generated-index",
+    "title": "React overview"
+  }
 }

@@ -5,8 +5,6 @@ sidebar_position: 3
 
 import ComponentRender from '@site/src/components/ComponentRender';
 
-import ConditionalRendering from '../../feliz-docs/fableoutput/Examples/Feliz/ConditionalRendering'
-import RawConditionalRendering from '!!raw-loader!../../feliz-docs/Examples/Feliz/ConditionalRendering.fs'
 
 F# syntax allows for multiple solutions to conditional rendering in React components. Here are some of the most common patterns:
 
@@ -15,6 +13,10 @@ F# syntax allows for multiple solutions to conditional rendering in React compon
 You can use any F# pattern normally used for conditional logic in your React components.
 
 :::
+
+
+import ConditionalRendering from '../../feliz-docs/fableoutput/Examples/Feliz/ConditionalRendering'
+import RawConditionalRendering from '!!raw-loader!../../feliz-docs/Examples/Feliz/ConditionalRendering.fs'
 
 <ComponentRender code={RawConditionalRendering}>
   <ConditionalRendering />

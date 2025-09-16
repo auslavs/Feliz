@@ -1,3 +1,7 @@
 {
-  "label": "Server APIs"
+  "label": "Server APIs",
+  "link": {
+    "type": "generated-index",
+    "title": "React-DOM Server APIs overview"
+  }
 }

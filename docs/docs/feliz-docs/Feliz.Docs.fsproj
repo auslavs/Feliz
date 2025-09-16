@@ -50,6 +50,12 @@
     <Compile Include="Examples/Feliz/RenderingLists.fs" />
     <Compile Include="Examples/Feliz/ReactComponent.fs" />
     <Compile Include="Examples/Feliz/ReactComponentImport.fs" />
+    <Compile Include="Examples/Guides/UnboxStringEnum.fs" />
+    <Compile Include="Examples/Guides/BrowserTypesEvents.fs" />
+    <Compile Include="Examples/Guides/BrowserTypesGlobalNamespaces.fs" />
+    <Compile Include="Examples/Guides/FablePromise.fs" />
+    <Compile Include="Examples/Guides/Async.fs" />
+    <Compile Include="Examples/Guides/POJO.fs" />
   </ItemGroup>
 
   <!--<ItemGroup>

@@ -1,0 +1,193 @@
+---
+title: Fable
+sidebar_position: 0
+description: A collection of common pitfalls when using Fable for webdev.
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import NugetPGK from '@site/src/components/NugetPkgAdmonition';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+The following is a collection of short guides and tips for common pitfalls when using Fable for frontend development. Feel free to checkout the categories on the in-page table of contents in the sidebar and navigate to the topic you are interested in.
+
+:::tip[Fable official docs]
+
+Altough I might repeat some of the content here, I highly recommend you to check out the [official Fable JavaScript documentation](https://fable.io/docs/javascript/features.html). It contains a lot of useful information.
+
+:::
+
+## JavaScript Objects
+
+When working with JavaScript libraries or even Browser APIs you will often encounter JavaScript objects.
+
+```tsx
+const MyObject = {
+  name: "Feliz",
+  version: 3,
+  isAwesome: true
+}
+```
+
+Altough this looks very similiar to a F# record type, it is not the same. Fable transpiles F# record types to classes. If you want to create a plain JavaScript object, you have multiple options. You should use the one that fits your use case the best.
+
+- Use a anonymous record types
+
+  Very flexible and can be created inline.
+
+  ```fsharp
+  let myObject = {| name = "Feliz"; version = 3; isAwesome = true |}
+  ```
+- Use a f# class with the `[<PojoAttribute>]` attribute
+
+  Allows for optional parameters.
+
+  ```fsharp
+  [<Fable.Core.JS.PojoAttribute>]
+  type POJOClass(?name: string, ?version: int, ?isAwesome: bool) =
+      member val name = name with get, set
+      member val version = version with get, set
+      member val isAwesome = isAwesome with get, set 
+    
+  let Pojo_Class = POJOClass(name = "Fable", isAwesome = true)
+
+  let Pojo_Class2 = POJOClass("Fable")
+  ```
+- Use a f# class with the `[<ParamObject; Emit("$0")>]` combination
+
+  ```fsharp
+  [<AllowNullLiteral>]
+  [<Global>] // do not generate code for this with Fable
+  type Options
+      [<ParamObject>] // pass all parameters as a single JS object
+      [<Emit("$0")>] // ... and return only the parameters after transpilation to JS.
+      (
+          searchTerm: string, 
+          ?isCaseSensitive: bool
+      ) =
+      member val searchTerm: string = jsNative with get, set
+      member val isCaseSensitive: bool option = jsNative with get, set
+
+  let options1 = new Options("foo")
+  let options2 = new Options(Regex("foo"))
+  ```
+
+:::info[Fable Transpilation comparisons]
+
+Here you can find direct fable transpilation comparisons between the different approaches.
+
+<details>
+<summary>Direct comparison between multiple POJO approaches</summary>
+
+<Tabs>
+
+<TabItem value="F#" label="F#">
+
+import POJO from '!!raw-loader!../../feliz-docs/Examples/Guides/POJO.fs'
+
+<CodeBlock language="fsharp">
+{POJO}
+</CodeBlock>
+
+</TabItem>
+
+<TabItem value="JavaScript" label="JavaScript">
+
+import POJOTsx from '!!raw-loader!../../feliz-docs/fableoutput/Examples/Guides/POJO.jsx'
+
+<CodeBlock language="tsx">
+{POJOTsx}
+</CodeBlock>
+
+</TabItem>
+
+</Tabs>
+
+</details>
+
+:::
+
+
+## Promises and Async
+
+The f# native way of handling asynchronous computations is using `async`. However, when working with JavaScript libraries and the browser environment, you will often encounter `Promises`.
+
+### Promises
+
+`Promises` are the JavaScript way of handling asynchronous operations. In Fable, I highly recommend using the [Fable.Promise nuget package](https://github.com/fable-compiler/fable-promise), which provides a clean API for working with Promises in Fable.
+
+<NugetPGK href="https://www.nuget.org/packages/Fable.Promise/" name="Fable.Promise" docs="https://fable.io/fable-promise/" source="https://github.com/fable-compiler/fable-promise">
+  Fable.Promise is a library that provides a simple and efficient way to work with JavaScript Promises in Fable. It allows you to create, chain, and handle Promises using F# computational expressions.
+</NugetPGK>
+
+import FablePromise from '!!raw-loader!../../feliz-docs/Examples/Guides/FablePromise.fs'
+
+<CodeBlock language="fsharp">
+{FablePromise}
+</CodeBlock>
+
+:::tip
+Checkout the [Fable.Promise docs](https://fable.io/fable-promise/) for more examples! 
+:::
+
+The example above returns a `Promise<unit>`, which cannot be directly returned in a `prop.onClick` handler. You can use `fetchData(...) |> Promise.start` to make the f# compiler happy.
+
+### Async
+
+In f# `async` is is the native way to handle asynchronous computations. It is similar to JavaScript's `async/await` syntax.
+
+Interacting with native JavaScript libraries, as well as f# libraries might require you to use both `async` and `promise`. But they can be conviniently converted between each other using `Async.AwaitPromise` and `Async.StartAsPromise`.
+
+import FableAsync from '!!raw-loader!../../feliz-docs/Examples/Guides/Async.fs'
+
+<CodeBlock language="fsharp">
+{FableAsync}
+</CodeBlock>
+
+:::danger
+The most important difference between `async` and `promise` is that `async` is lazy and will not start executing until you explicitly start it using `Async.Start` or `Async.StartImmediate`. On the other hand, `promise` is eager and starts executing as soon as it is created.
+:::
+
+## Where are the Browser Types?
+
+import RawBrowserTypesGlobal from '!!raw-loader!../../feliz-docs/Examples/Guides/BrowserTypesGlobalNamespaces.fs'
+import RawBrowserTypesEvents from '!!raw-loader!../../feliz-docs/Examples/Guides/BrowserTypesEvents.fs'
+
+Here is a example of global namespaces in a browser environment and where to find them in Fable:
+
+<CodeBlock language="fsharp">
+{RawBrowserTypesGlobal}
+</CodeBlock>
+
+
+Here is an example of using browser event types:
+
+:::tip
+Checkout the section on [`Promises`](#promises-and-async) for more information on how to work with async code in Fable.
+:::
+
+<CodeBlock language="fsharp">
+{RawBrowserTypesEvents}
+</CodeBlock>
+
+## `unbox<_>`
+
+`unbox<_>` is the Fable equivalent of TypeScript's `as` keyword. It is used to cast a value to a different type. However, it does not perform any runtime checks, so if the value is not of the expected type, it can lead to runtime errors.
+
+It should only be used if you are sure about the type of the value you are casting.
+
+Here is a example using `[<StringEnum>]` (which makes fable transpile the union cases to string literals) and setting the value to local storage:
+
+import RawConditionalRendering from '!!raw-loader!../../feliz-docs/Examples/Guides/UnboxStringEnum.fs'
+
+<CodeBlock language="fsharp">
+{RawConditionalRendering}
+</CodeBlock>
+
+:::info
+
+`!!` is a shorthand operator for `unbox` and can be used after opening `Fable.Core.JsInterop`.
+
+:::
