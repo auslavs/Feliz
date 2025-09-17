@@ -21,11 +21,11 @@ In my opinion this feature is still experimental, and it might be best to mix an
 
 ## Using the JSX module
 
-Below you can find an example for using the `Feliz.JSX` module. It fully duplicates the syntax from the default `Html.*` type. 
+The `Feliz.JSX` module uses Fables `JSX.create` function to output JSX. This abstraction from `JSX.create` to JSX output is done directly on the Fable compiler level, resulting in a very clean output.
 
 If you want to give it a try you can `open Feliz.JSX` in your file. This will shadow the existing `Html.*` so you can easily switch between the two.
 
-Check out the Example below and make sure to check out the transpiled outputs!
+Below you can find an example for using the `Feliz.JSX` module. It fully duplicates the syntax from the default `Html.*` type. Make sure to check out the transpiled outputs!
 
 import JSXModule from '../../feliz-docs/fableoutput/Examples/Guides/JSXModule'
 import RawJSXModule from '!!raw-loader!../../feliz-docs/Examples/Guides/JSXModule.fs'
@@ -166,5 +166,79 @@ Html.ul [
 
 </Tabs>
 
+#### conditional properties ⚠️
+
+`error FABLE: Expecting a static list or array literal (no generator) for JSX props`
+
+:::info
+Tracked in this [GitHub issue](
+https://github.com/fable-compiler/Fable/issues/4119).
+:::
+
+You might encounter issues when using conditional properties.
+
+In Feliz you normally can do conditional properties in any way F# list syntax allows.
+
+```fsharp
+Html.div [
+    if isActive then prop.custom("data-active", true) 
+    if isDisabled then prop.className "disabled"
+]
+```
+
+This does currently not work in JSX syntax. This issue arises due to JSX output syntax where conditional properties are done like this:
+
+```jsx
+<div>
+  data-active={isActive ? true : undefined}
+  className={isDisabled ? "disabled" : undefined}
+</div>
+```
+
+Following this line of thought, in which the property key is always present we need to shift the conditional inside the property value. So the correct way to do conditional properties in JSX syntax is:
+
+```fsharp
+Html.div [
+    prop.custom("data-active", isActive)
+    prop.className(if isDisabled then "disabled" else "")
+]
+```
 
 ## Using template strings
+
+:::info
+This is based on the following [blog post](https://fable.io/blog/2022/2022-10-12-react-jsx.html) by [@alfonsogcnunez](https://x.com/alfonsogcnunez)
+:::
+
+Using f# template strings you can write JSX directly in your f# code. The syntax used is very similiar to the one introduced by [Lit](https://lit.dev/docs/templates/overview/), which is a popular library for building web components. 
+
+We use `Html.jsx $""" .. """` to define a JSX template. Inside the template you can use `${ ... }` to insert f# expressions.
+
+import JSXTemplate from '../../feliz-docs/fableoutput/Examples/Guides/JSXTemplate'
+import RawJSXTemplate from '!!raw-loader!../../feliz-docs/Examples/Guides/JSXTemplate.fs'
+import RawJSXTemplateJSX from '!!raw-loader!../../feliz-docs/fableoutput/Examples/Guides/JSXTemplate.jsx'
+
+<ComponentRender code={[
+  { language: 'fsharp', content: RawJSXTemplate, fileName: 'RawJSXTemplate.fs' },
+  { language: 'jsx', content: RawJSXTemplateJSX, fileName: 'RawJSXTemplate.jsx' },
+]} defaultOpen> 
+  <JSXTemplate />
+</ComponentRender>
+
+### Editor support
+
+To get syntax highlighting and intellisense support in VSCode you can use the plugin [Highlight templates in F#](https://marketplace.visualstudio.com/items?itemName=alfonsogarciacaro.vscode-template-fsharp-highlight).
+
+:::danger
+Make sure to follow the exact syntax for template strings to get hightlighting and intellisense support.
+
+```fsharp
+// This must be one line with a linebreak after the $"""
+Html.jsx $""" 
+  <div>
+    <h1>Hello from JSX Template!</h1>
+    <p>This is a paragraph inside a div.</p>
+  </div>
+"""
+// The closing """ must be on a new line
+```

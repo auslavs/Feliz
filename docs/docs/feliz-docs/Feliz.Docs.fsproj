@@ -59,6 +59,7 @@
     <Compile Include="Examples/Guides/FelizStyleBindings.fs" />
     <Compile Include="Examples/Guides/JSXModule.fs" />
     <Compile Include="Examples/Guides/JSXModuleAlias.fs" />
+    <Compile Include="Examples/Guides/JSXTemplate.fs" />
   </ItemGroup>
 
   <!--<ItemGroup>
