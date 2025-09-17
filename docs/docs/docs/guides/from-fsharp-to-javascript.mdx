@@ -245,7 +245,7 @@ dotnet fable --lang ts
 This follow along will assume you are generating TypeScript.
 :::
 
-The transpiled code in its current state looks rather obscure and is not very ergonomic to use from JavaScript. Check it out if you are interested, but I will highlight the relevant parts below.
+The transpiled code in its current state looks rather obscure and is not very comfortable to use from JavaScript. Check it out if you are interested, but I will highlight the relevant parts below.
 
 <details>
 <summary>Transpiled code</summary>
@@ -270,7 +270,7 @@ What can we see?
 
 - The function name is not descriptive and with the generated hash might even change between builds.
 - Feliz `[<ReactComponent>]` already transforms our tupled arguments into a single object argument with added type information.
-- `classNames` is of type `FSharpList<string>`, which is not very ergonomic to use from JavaScript. A simple `string[]` would be easier to understand.
+- `classNames` is of type `FSharpList<string>`, which is not very comfortable to use from JavaScript. A simple `string[]` would be easier to understand.
 - The `config` argument is of type `CounterConfig`, which is a record type. A more JavaScript friendly approach would be to use an object with optional fields.
 - Hidden in the code example above, but `CounterConfig` contains a field of type `CounterVariant`, which is a discriminated union. 
 
@@ -499,7 +499,7 @@ type Components =
 
 ## 4: Change discriminated union to string enum
 
-Discriminated unions are not very ergonomic to use from JavaScript. A simple string enum is much easier to use.
+Discriminated unions are not very comfortable to use from JavaScript. A simple string enum is much easier to use.
 
 <Tabs>
 
