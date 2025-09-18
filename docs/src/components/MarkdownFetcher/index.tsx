@@ -19,6 +19,10 @@ type MarkdownFetcherProps = {
   docs?: string;
 };
 
+type ExternalRefBannerProps = MarkdownFetcherProps & {
+  children?: ReactNode;
+};
+
 const GithubIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 	<rect width="24" height="24" fill="none" />
 	<path fill="currentColor" d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2" />
@@ -86,16 +90,15 @@ function ExternalLink({icon, ...props}) {
   );
 }
 
-export default function MarkdownFetcher({ mdSource, name, github, docs, nuget }: MarkdownFetcherProps) {
-  
+export function ExternalRefBanner({ name, github, docs, nuget, children }: ExternalRefBannerProps) {
   return (
-    <div>
+    <div className={styles.container}>
       <div className={styles.header}>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-	<rect width="16" height="16" fill="none" />
-	<path fill="currentColor" d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16h-8.5a.75.75 0 0 1 0-1.5h8.5a.25.25 0 0 0 .25-.25V6.5h-13v1.75a.75.75 0 0 1-1.5 0ZM6.5 5h8V1.75a.25.25 0 0 0-.25-.25H6.5Zm-5 0H5V1.5H1.75a.25.25 0 0 0-.25.25Z" />
-	<path fill="currentColor" d="M1.5 13.737a2.25 2.25 0 0 1 2.262-2.25L4 11.49v1.938c0 .218.26.331.42.183l2.883-2.677a.25.25 0 0 0 0-.366L4.42 7.89a.25.25 0 0 0-.42.183V9.99l-.23-.001A3.75 3.75 0 0 0 0 13.738v1.012a.75.75 0 0 0 1.5 0z" />
-</svg>
+          <rect width="16" height="16" fill="none" />
+          <path fill="currentColor" d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16h-8.5a.75.75 0 0 1 0-1.5h8.5a.25.25 0 0 0 .25-.25V6.5h-13v1.75a.75.75 0 0 1-1.5 0ZM6.5 5h8V1.75a.25.25 0 0 0-.25-.25H6.5Zm-5 0H5V1.5H1.75a.25.25 0 0 0-.25.25Z" />
+          <path fill="currentColor" d="M1.5 13.737a2.25 2.25 0 0 1 2.262-2.25L4 11.49v1.938c0 .218.26.331.42.183l2.883-2.677a.25.25 0 0 0 0-.366L4.42 7.89a.25.25 0 0 0-.42.183V9.99l-.23-.001A3.75 3.75 0 0 0 0 13.738v1.012a.75.75 0 0 0 1.5 0z" />
+        </svg>
         <span className={styles.title}>{name}</span>
         <div className={styles.iconContainer}>
           { github && <ExternalLink href={github} icon={GithubIcon} title="GitHub repository" /> }
@@ -103,6 +106,17 @@ export default function MarkdownFetcher({ mdSource, name, github, docs, nuget }:
           { nuget && <ExternalLink href={nuget} icon={NugetIcon} title="NuGet package" /> }
         </div>
       </div>
+      {children && 
+      <div className={styles.content}>{children}</div>}
+    </div>
+  )
+}
+
+export default function MarkdownFetcher(props: MarkdownFetcherProps) {
+  
+  return (
+    <div>
+      <ExternalRefBanner {...props} />
 
       <Suspense fallback={<div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 	<rect width="24" height="24" fill="none" />
@@ -111,7 +125,7 @@ export default function MarkdownFetcher({ mdSource, name, github, docs, nuget }:
 		<animateTransform attributeName="transform" dur="1s" from="0 12 12" repeatCount="indefinite" to="360 12 12" type="rotate" />
 	</path>
 </svg> Loading markdown...</div>}>
-        <MarkdownContent sourceUrl={mdSource}/>
+        <MarkdownContent sourceUrl={props.mdSource}/>
       </Suspense>
     </div>
   );

@@ -16,9 +16,10 @@ interface ComponentRenderProps {
   code: string | CodeFile[];
   language?: string;
   triggerRender?: boolean;
+  defaultOpen?: boolean;
 }
 
-export default function ComponentRender({ children, code, language = "fsharp", triggerRender = false }: ComponentRenderProps) {
+export default function ComponentRender({ children, code, language = "fsharp", triggerRender = false, defaultOpen = false }: ComponentRenderProps) {
 
   const [instanceKey, setInstanceKey] = useState(0);
   const [showComponent, setShowComponent] = useState(!triggerRender); 
@@ -56,25 +57,29 @@ export default function ComponentRender({ children, code, language = "fsharp", t
           </ErrorBoundary>
         )}
       </div>
-       {isMultiFile ? (
-          <Tabs>
-            {(code as CodeFile[]).map((file) => (
-              <TabItem key={file.fileName} value={file.fileName} label={file.fileName}>
-                <CodeBlock
-                  language={file.language ?? language}
-                  showLineNumbers
-                  title={file.fileName}
-                >
-                  {file.content}
-                </CodeBlock>
-              </TabItem>
-            ))}
-          </Tabs>
-        ) : (
-          <CodeBlock language={language} showLineNumbers>
-            {code as string}
-          </CodeBlock>
-        )}
+      <details open={defaultOpen}>
+        <summary style={{ cursor: "pointer", userSelect: "none" }}>Show code</summary>
+        {isMultiFile ? (
+            
+            <Tabs>
+              {(code as CodeFile[]).map((file) => (
+                <TabItem key={file.fileName} value={file.fileName} label={file.fileName}>
+                  <CodeBlock
+                    language={file.language ?? language}
+                    showLineNumbers
+                    title={file.fileName}
+                  >
+                    {file.content as string}
+                  </CodeBlock>
+                </TabItem>
+              ))}
+            </Tabs>
+          ) : (
+            <CodeBlock language={language} showLineNumbers>
+              {code as string}
+            </CodeBlock>
+          )}
+      </details>
     </div>
   );
 }

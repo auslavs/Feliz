@@ -15,9 +15,7 @@
     <Compile Include="Examples/React/MultipleStateVariables.fs" />
     <Compile Include="Examples/React/UseReducer.fs" />
     <Compile Include="Examples/React/EffectfulCounter.fs" />
-    <Compile Include="Examples/React/EffectfulOnce.fs" />
     <Compile Include="Examples/React/EffectfulWithDependency.fs" />
-    <Compile Include="Examples/React/EffectfulTimer.fs" />
     <Compile Include="Examples/React/UseCancellationTokenHook.fs" />
     <Compile Include="Examples/React/Portal.fs" />
     <Compile Include="Examples/React/HoverAnimations.fs" />
@@ -25,6 +23,43 @@
     <Compile Include="Examples/React/FocusInput.fs" />
     <Compile Include="Examples/React/ImperativeHandle.fs" />
     <Compile Include="Examples/React/CodeSplitting.fs" />
+    <Compile Include="Examples/React/UseStateWithUpdater.fs" />
+    <Compile Include="Examples/React/UseCallback.fs" />
+    <Compile Include="Examples/React/UseContext.fs" />
+    <Compile Include="Examples/React/UseDebugValue.fs" />
+    <Compile Include="Examples/React/UseEffect.fs" />
+    <Compile Include="Examples/React/UseId.fs" />
+    <Compile Include="Examples/React/UseImperativeHandle.fs" />
+    <Compile Include="Examples/React/UseLayoutEffect.fs" />
+    <Compile Include="Examples/React/UseMemo.fs" />
+    <Compile Include="Examples/React/UseRef.fs" />
+    <Compile Include="Examples/React/UseInputRef.fs" />
+    <Compile Include="Examples/React/Fragment.fs" />
+    <Compile Include="Examples/React/StrictMode.fs" />
+    <Compile Include="Examples/React/Suspense.fs" />
+    <Compile Include="Examples/React/UseEffectOnce.fs" />
+    <Compile Include="Examples/React/UseEffectDisposable.fs" />
+    <Compile Include="Examples/ReactDOM/CreatePortal.fs" />
+    <Compile Include="Examples/ReactDOM/CreateRoot.fs" />
+    <Compile Include="Examples/ReactDOM/HydrateRoot.fs" />
+    <Compile Include="Examples/Feliz/Html.fs" />
+    <Compile Include="Examples/Feliz/Overloads.fs" />
+    <Compile Include="Examples/Feliz/Styling.fs" />
+    <Compile Include="Examples/Feliz/FSharp.fs" />
+    <Compile Include="Examples/Feliz/ConditionalRendering.fs" />
+    <Compile Include="Examples/Feliz/RenderingLists.fs" />
+    <Compile Include="Examples/Feliz/ReactComponent.fs" />
+    <Compile Include="Examples/Feliz/ReactComponentImport.fs" />
+    <Compile Include="Examples/Guides/UnboxStringEnum.fs" />
+    <Compile Include="Examples/Guides/BrowserTypesEvents.fs" />
+    <Compile Include="Examples/Guides/BrowserTypesGlobalNamespaces.fs" />
+    <Compile Include="Examples/Guides/FablePromise.fs" />
+    <Compile Include="Examples/Guides/Async.fs" />
+    <Compile Include="Examples/Guides/POJO.fs" />
+    <Compile Include="Examples/Guides/FelizStyleBindings.fs" />
+    <Compile Include="Examples/Guides/JSXModule.fs" />
+    <Compile Include="Examples/Guides/JSXModuleAlias.fs" />
+    <Compile Include="Examples/Guides/JSXTemplate.fs" />
   </ItemGroup>
 
   <!--<ItemGroup>

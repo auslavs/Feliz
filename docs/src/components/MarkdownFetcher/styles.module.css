@@ -1,12 +1,29 @@
-.header {
+.container {
   display: flex;
   align-items: center;
   margin-bottom: 12px;
   background-color: var(--ifm-color-primary-contrast-background);
   color: var(--ifm-color-primary-contrast-foreground);
   padding: .5rem 1rem;
-  flex-direction: row;
   gap: 0.5rem;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.5rem;
+  flex-direction: row;
+}
+
+.content {
+  width: 100%;
+  
+
+  & >:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .iconContainer {

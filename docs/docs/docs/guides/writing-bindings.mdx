@@ -1,0 +1,557 @@
+---
+title: Writing Bindings
+description: How to write bindings for JavaScript libraries in Fable
+sidebar_position: 1
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import CodeBlock from '@theme/CodeBlock';
+
+I will split this guide into two main sections, one for writing bindings for functions and objects, and one for writing bindings for React components.
+
+Generic concepts will be explained and referenced in the sections.
+
+I will showcase the concepts using existing JS libraries as examples.
+
+:::info
+There are multiple ways to write bindings, and this is just one way of doing it. This is just my personal preference and how I approach the problem.
+:::
+
+## ReactComponent
+
+:::info[@floating-ui/react]
+[Floating UI](https://floating-ui.com/docs/react) is a low-level library for positioning "floating" elements like tooltips, popovers, dropdowns, and more. It provides a set of utilities to help you position these elements relative to a reference element while handling edge cases like viewport boundaries and scrolling.
+
+All bindings were written based on "@floating-ui/react": "^0.27.15",
+:::
+
+I got quite some reports that users were annoyed with dropdowns or context menus being positioned outside of the viewport, so I wanted to use a library which handles that for me. In this case floating ui.
+
+In this example we are looking at the [`FloatingFocusManager`](https://floating-ui.com/docs/FloatingFocusManager) component.
+
+### Import
+
+The official docs show the following import statement, and a look over the arguments shows that most of them are optional.
+
+```tsx
+import {FloatingFocusManager} from '@floating-ui/react';
+```
+
+```ts
+// props
+interface FloatingFocusManagerProps {
+  context: FloatingContext;
+  disabled?: boolean;
+  initialFocus?:
+    | number
+    | React.MutableRefObject<HTMLElement | null>;
+  returnFocus?:
+    | boolean
+    | React.MutableRefObject<HTMLElement | null>;
+  restoreFocus?: boolean;
+  guards?: boolean;
+  modal?: boolean;
+  visuallyHiddenDismiss?: boolean | string;
+  closeOnFocusOut?: boolean;
+  outsideElementsInert?: boolean;
+  getInsideElements?: () => Element[];
+  order?: Array<'reference' | 'floating' | 'content'>;
+}
+```
+
+We can start by writing a static class with a static member that imports the component.
+
+```fsharp
+[<Erase>]
+type FloatingUI =
+
+    [<ReactComponent("FloatingFocusManager", "@floating-ui/react")>]
+    static member FloatingFocusManager(props: obj) = React.Imported ()
+
+```
+
+### Props
+
+Because `[<ReactComponent>]` will ensure that arguments passed as props are correctly transpiled to JavaScript, we can just start adding the props in as much detail as we want.
+
+```fsharp
+type FloatingContext = obj // you can improve this type later
+
+[<Erase>]
+type FloatingUI =
+
+    [<ReactComponent("FloatingFocusManager", "@floating-ui/react")>]
+    static member FloatingFocusManager
+        (
+            context: FloatingContext,
+            ?disabled: bool,
+            ?initialFocus: obj, // don't want to deal with number or ref
+            ?returnFocus: obj, // don't want to deal with number or ref
+            ?restoreFocus: bool,
+            ?guards: bool,
+            ?modal: bool,
+            ?visuallyHiddenDismiss: bool, // bool is enough for my case
+            ?closeOnFocusOut: bool,
+            ?outsideElementsInert: bool,
+            ?getInsideElements: unit -> ReactElement[],
+            ?order: string[] // could use StringEnum here
+        ) =
+        React.Imported ()
+```
+
+Now we already have a working binding for the `FloatingFocusManager` component, ... or do we!?! 👀
+
+### Children prop
+
+From the an example in the official docs we can see that the component expects children as well, which we did not include in our binding.
+
+```tsx
+<FloatingFocusManager context={context} modal={false}>
+  <div
+    ref={refs.setFloating}
+    style={{
+      ...floatingStyles,
+      overflowY: "auto",
+      background: "#eee",
+      minWidth: 100,
+      borderRadius: 8,
+      outline: 0,
+    }}
+    {...getFloatingProps()}
+  >
+  ..
+  </div>
+</FloatingFocusManager>
+```
+
+This jsx syntax is the same as passing a prop called `children`, so we can add that to our binding as well.
+
+:::tip
+There are more properties like this. For example the React `key` property, which we can also add.
+:::
+
+```fsharp
+
+//..
+    [<ReactComponent("FloatingFocusManager", "@floating-ui/react")>]
+    static member FloatingFocusManager
+        (
+            context: obj,
+            // highlight-start
+            // add children prop as required, as it does not really make sense without it
+            children: ReactElement, 
+            // highlight-end
+            ?disabled: bool,
+            ?initialFocus: obj,
+            ?returnFocus: obj,
+            ?restoreFocus: bool,
+            ?guards: bool,
+            ?modal: bool,
+            ?visuallyHiddenDismiss: bool,
+            ?closeOnFocusOut: bool,
+            ?outsideElementsInert: bool,
+            ?getInsideElements: unit -> ReactElement[],
+            ?order: string[],
+            // highlight-next-line
+            ?key: string // optional key prop
+        ) =
+        React.Imported ()
+```
+
+:::info
+This example shows that writing bindings can be an iterative process, where you start with the basics and then improve the types and add missing props as you go.
+:::
+
+### Feliz style bindings
+
+Most of the time I write bindings _not_ in the Feliz style, but rather as static members with optional arguments. 
+
+I prefer this style because most Components I use have required and optional props and the feliz style has issues in communicating that some props are required.
+
+In addition Feliz style bindings come with a log more boilerplate on part of the author, as you have to write a lot of code to get the same functionality as the static member approach.
+
+:::info[Help Wanted]
+If you know of better ways to write these please open a PR or issue!
+:::
+
+import RawFelizStyleBindings from '!!raw-loader!../../feliz-docs/Examples/Guides/FelizStyleBindings.fs'
+
+<CodeBlock language="fsharp">
+{RawFelizStyleBindings}
+</CodeBlock>
+
+## JavaScript library
+
+Lately it made sense for me to use some sort of data frame library in a project. I found Danfo.js which fit my criteria, so I started writing some bindings so i could use it in my project.
+
+:::info[Danfo.js]
+[Danfo.js](https://danfo.jsdata.org/) is a JavaScript library for data manipulation and analysis, similar to Python's Pandas library. It provides data structures like DataFrames and Series, along with various functions for data manipulation, cleaning, and visualization.
+
+All bindings were written based on "danfojs": "^1.2.0" 
+:::
+
+The general workflow I had to do can be summarized in the following steps:
+
+1. Read external file into dataframe
+2. Create new dataframe from additional info
+3. Merge two dataframes based on key
+4. Export dataframe to file
+
+I installed `danfojs` via npm, as i wanted to use it in the browser.
+
+> For client-side applications built with frameworks like React, Vue, Next.js, etc, you can install the danfojs version:
+
+```
+npm install danfojs
+
+or
+
+yarn add danfojs
+```
+
+### Library import
+
+In my use case I only needed a small subset of the library, so I started by writing bindings for the parts I needed.
+
+I looked through the docs and found a function to read .csv files via url, which fit my use case.:
+
+> danfo.readCSV(source, options)
+
+```js
+const dfd = require("danfojs-node")
+
+dfd.readCSV("https://raw.githubusercontent.com/plotly/datasets/master/finance-charts-apple.csv") //assumes file is in CWD
+  .then(df => {
+  
+   df.head().print()
+
+  }).catch(err=>{
+     console.log(err);
+  })
+```
+
+We can see the library assumes an import on which we can call the `readCSV` function. After a quick google search we can find that `const dfd = require("danfojs-node")` is similiar to `import * as dfd from "danfojs"` in ES6, which is what we want to use in the browser.
+
+So we can start by writing a binding for the `dfd` object.
+
+```fsharp
+open Fable.Core
+
+[<Erase>] // ensure that fable does not generate any js code for this type
+type Danfojs =
+
+    [<ImportAll("danfojs")>] // danfojs instead of `danfojs-node` for browser
+    static member dfd: obj = jsNative
+
+    // or using `importAll`; pick what you prefer
+    static member dfd: obj = importAll "danfojs"
+
+```
+
+We created a static class with a static member that imports the entire library as an object. Currently we typed it as `obj`, but we will improve that later.
+
+:::tip
+We can ensure that the library is correctly imported by logging it to the console:
+
+```fsharp
+console.log(Danfojs.dfd)
+``` 
+
+Which will not only verify if the import was successful, but also give us an overview of the available functions and properties on the object.:
+
+<details>
+<summary>Part of console output</summary>
+
+```console
+Module {…}
+  Config: (...)
+  DataFrame: (...)
+  Dt: (...)
+  ..
+  readCSV: (...)
+  readExcel: (...)
+  readJSON: (...)
+  ..
+```
+
+</details>
+
+:::
+
+### Interface with abstract members
+
+Next we want to write a binding for the `readCSV` function. We can see from the docs that it is an async function that returns a promise, which resolves to a DataFrame object.
+
+You can of course use [dynamic access](#dynamic-access-) to call the function, but we want to have type safety, so we will write a proper binding.
+
+While we are at it, we can also write the binding for the `toCsv`.
+
+Both functions handle .csv to and from a DataFrame object, and can be configured with optional options as object. Because we do not want to define the options object, we can type it as `obj` and make them optional with `?`.
+
+```fsharp
+type IDataFrame =
+    interface end
+
+type IDFD =
+
+    abstract member readCSV: string * ?options: obj -> JS.Promise<IDataFrame>
+
+    abstract member toCSV: IDataFrame * ?options: obj -> JS.Promise<unit>
+```
+
+:::info[Why interfaces with abstract members?]
+Interfaces with abstract members are a good way to define bindings in Fable, as they do not compile to any JavaScript code but allow you to define the shape of the objects you are working with, coming from the library.
+:::
+
+Now let us read a csv file and log the DataFrame to the console. Because our .csv file is tab delimited, we will pass an options object with the delimiter property set to `\t`.
+
+This required some lookup in the docs, but in the end we find the options object has a `delimiter` property.
+
+<details>
+<summary>Options object definition</summary>
+
+> quoted from docs
+
+The Parse Config Object
+
+The parse function may be passed a configuration object. It defines settings, behavior, and callbacks used during parsing. Any properties left unspecified will resort to their default values.
+
+
+Default Config With All Options
+
+```js
+{
+	delimiter: "",	// auto-detect
+	newline: "",	// auto-detect
+	quoteChar: '"',
+	escapeChar: '"',
+	header: false,
+	transformHeader: undefined,
+	dynamicTyping: false,
+	preview: 0,
+	encoding: "",
+	worker: false,
+	comments: false,
+	step: undefined,
+	complete: undefined,
+	error: undefined,
+	download: false,
+	downloadRequestHeaders: undefined,
+	downloadRequestBody: undefined,
+	skipEmptyLines: false,
+	chunk: undefined,
+	chunkSize: undefined,
+	fastMode: undefined,
+	beforeFirstChunk: undefined,
+	withCredentials: undefined,
+	transform: undefined,
+	delimitersToGuess: [',', '\t', '|', ';', Papa.RECORD_SEP, Papa.UNIT_SEP],
+	skipFirstNLines: 0
+}
+```
+
+</details>
+
+As I didn't really feel like writing a full options object, I just created an anonymous record with the `delimiter` property. While looking through the docs I also found the `dataframe.print()` function, which prints the DataFrame to the console in a nice format, so I added that to the `IDataFrame` interface.
+
+```fsharp
+open Fable.Core
+open Browser.Dom
+
+type IDataFrame =
+  abstract member print: unit -> unit
+
+type IDFD =
+
+  abstract member readCSV: string * ?options: obj -> JS.Promise<IDataFrame>
+
+  abstract member toCSV: IDataFrame * ?options: obj -> JS.Promise<unit>
+
+let readCsv(url: string) =
+    promise {
+        let! csv = Danfojs.dfd.readCSV(
+            url,
+            {|
+                delimiter = "\t"
+            |}
+        )
+        csv.print()
+    }
+```
+
+### Emit to init classes
+
+Next up is creating our own DataFrame object which we then want to merge into the DataFrame we read from the .csv file.
+
+In the docs we can find **"Creating a DataFrame"** and specifically **"Creating a DataFrame from an array of array"**
+
+> danfo.DataFrame(data, options)
+
+`data` can be anyof the following: 2D Array, 2D Tensor, JSON object, wheras `options` is an optional object to configure the DataFrame.
+
+```js
+const dfd = require("danfojs-node")
+
+let arr = [[12, 34, 2.2, 2], [30, 30, 2.1, 7]]
+let df = new dfd.DataFrame(arr, {columns: ["A", "B", "C", "D"]})
+df.print()
+```
+
+Because I only needed a dataframe from `string [][]`, I wrote a binding for that specific case.
+
+```fsharp
+
+type IDFD =
+    abstract member readCSV: string * ?options: obj -> JS.Promise<IDataFrame>
+    abstract member toCSV: IDataFrame * ?options: obj -> JS.Promise<unit>
+
+    abstract member DataFrame: string [] [] * ?options: obj -> IDataFrame
+
+module Test =
+
+    let testdf() = Danfojs.dfd.DataFrame( [| [|"A"; "B"|]; [|"1"; "2"|]; [|"3"; "4"|]|])
+
+```
+
+We make a button with an onClick that calls `Test.testdf().print()` aaaand nothing happens 💀. We check the console output and find:
+
+```console
+TypeError: Class constructor oE cannot be invoked without 'new'
+```
+
+We then check the transpiled JavaScript code and find:
+
+```js
+export function Test_testdf() {
+    return danfojs.DataFrame([["A", "B"], ["1", "2"], ["3", "4"]]);
+}
+```
+
+Which is as the error states, calling the class constructor without the `new` keyword (also shown in the example from the docs).
+
+To fix this, while keeping the code f# friendly as well as correct in the js output, we can use the `Emit` attribute to finetune the JavaScript output.
+
+```fsharp
+type IDFD =
+    [<Emit("new $0.DataFrame($1,$2)")>]
+    abstract member DataFrame: string [] [] * ?options: obj -> IDataFrame
+```
+
+And now it works as expected and we can create our own DataFrames.
+
+### Function with js object parameter
+
+The last step missing is the `merge` function, which merges two DataFrames based on a key.
+
+We check the docs and find: `danfo.merge(options)`
+
+> Merge DataFrame or named Series objects with a database-style join.The join is done on columns or indexes.
+
+> _Description of options object_
+>
+> **left**: A DataFrame or named Series object.
+>
+> **right**: Another DataFrame or named Series object.
+>
+> **on**: Column names to join on. Must be found in both the left and right DataFrame and/or Series objects.
+> 
+> **how**: One of 'left','right','outer', 'inner'. Defaults to 'inner'
+
+This is a interesting case because the function takes a single object as parameter, which contains multiple properties, from which `how` is optional.
+
+We could just do `option: obj` again and pass an anonymous record, but the main purpose of this function is to merge two DataFrames, so we want to have type safety on at least the `left` and `right` properties.
+
+And because `how` is optional, we want to make it optional in our binding as well, so we can call the function with or without it.
+
+Therefore I like using `[<ParamObject>]` for this case, which allows us to write the arguments in tuple style and have fable transpile them as JavaScript object.
+
+```fsharp
+type IDFD =
+    // ..
+    [<ParamObject>]
+    abstract member merge: left: IDataFrame * right: IDataFrame * on: string [] * ?how: string -> IDataFrame
+
+```
+
+<details>
+<summary>Example transpiled output</summary>
+
+```fsharp
+
+Danfojs.dfd.merge(df, csv, [|userDataIdColumnName|], "left")
+```
+
+```js
+
+danfojs.merge({
+    left: df,
+    right: csv,
+    on: [userDataIdColumnName],
+    how: "left",
+})
+
+```
+
+</details>
+
+Nice ✨ This allows us to call the function without any boilerplate.
+
+One last thing to note is that the `how` argument can be "One of 'left','right','outer', 'inner'". This is a perfect example on when to use [`[<StringEnum>]`](#stringenum) to create a discriminated union for the possible values.
+
+```fsharp
+open Fable.Core
+
+[<StringEnum(CaseRules.LowerFirst)>]
+type MergeHow =
+    | Left
+    | Right
+    | Outer
+    | Inner
+
+type IDFD =
+    [<ParamObject>]
+    abstract member merge: left: IDataFrame * right: IDataFrame * on: string [] * ?how: MergeHow -> IDataFrame
+
+```
+
+And thats it! We can now read, create, merge and export DataFrames using Danfo.js in a type safe manner.
+
+:::tip
+Because we used interfaces with abstract members on an imported object, Fable does not generate any JavaScript code for our bindings! There is no bundle size increase, just type safety. 🌊
+:::
+
+## General concepts
+
+### Dynamic access `(?)`
+
+`?` can be used to dynamically access properties and methods on an object when the type is not known at compile time. In doing so you are forgoing type safety, so use it with caution.
+
+```fsharp
+open Fable.Core.JsInterop
+
+jsValue?testProperty // dynamic access to testProperty
+
+jsValue?testMethod("Test", 12) // dynamic call to testMethod
+
+```
+
+### Emit
+
+Check out the official docs on [Emit](https://fable.io/docs/javascript/features.html#emit) for more information and examples.
+
+### `[<StringEnum>]`
+
+Whenever we encounter a limited set of string values, we can use `[<StringEnum>]` to create a discriminated union that will transpile to the correct string values.
+
+```fsharp
+open Fable.Core
+
+[<StringEnum>]
+type Variant
+  | Primary
+  | Neutral
+  | Outline
+
+```
+
+Checkout the official docs to see how to customize the string values: [StringEnum](https://fable.io/docs/javascript/features.html#caserules)

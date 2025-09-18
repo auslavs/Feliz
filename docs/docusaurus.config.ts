@@ -41,11 +41,11 @@ const config: Config = {
       'classic',
       {
         docs: {
-          lastVersion: 'current',
+          lastVersion: '2.9.0',
           versions: {
             current: {
-              badge: false,
-              label: "Current"
+              // badge: false,
+              label: "Next"
             },
           },
           routeBasePath: '/', // Serve the docs at the site's root
