@@ -245,20 +245,20 @@ let main args =
     | "pack" :: _ ->
         Pack.pack()
     | "release" :: a ->
-        match a with 
-        | apiKey :: _ -> 
-            Release.release(apiKey)
-        | [] ->
-            let apiKey = System.Environment.GetEnvironmentVariable(NugetAPIKeyEnvVariable)
-            Release.release(apiKey)
-    | "release-pipeline" :: a :: "--no-tests" :: _ ->
-        Pack.pack()
-        Release.release(a)
-    | "release-pipeline" :: a :: _ ->
+        let apiKey =
+            match a with 
+            | apiKey :: _ -> apiKey
+            | [] -> System.Environment.GetEnvironmentVariable(NugetAPIKeyEnvVariable)
+        Release.release(apiKey)
+    | "release-pipeline" :: a ->
+        let apiKey =
+            match a with 
+            | apiKey :: _ -> apiKey
+            | [] -> System.Environment.GetEnvironmentVariable(NugetAPIKeyEnvVariable)
         Setup.all()
         Tests.runAll None
         Pack.pack()
-        Release.release(a)
+        Release.release(apiKey)
 
     | "develop" :: _ ->
         // Placeholder for develop command
