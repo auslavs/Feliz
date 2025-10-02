@@ -251,19 +251,15 @@ let main args =
         | [] ->
             let apiKey = System.Environment.GetEnvironmentVariable(NugetAPIKeyEnvVariable)
             Release.release(apiKey)
-    | "release-pipeline" :: a ->
-        match a with 
-        | apiKey :: _ -> 
-            Setup.all()
-            Tests.runAll None
-            Pack.pack()
-            Release.release(apiKey)
-        | [] ->
-            let apiKey = System.Environment.GetEnvironmentVariable(NugetAPIKeyEnvVariable)
-            Setup.all()
-            Tests.runAll None
-            Pack.pack()
-            Release.release(apiKey)
+    | "release-pipeline" :: a :: "--no-tests" :: _ ->
+        Pack.pack()
+        Release.release(a)
+    | "release-pipeline" :: a :: _ ->
+        Setup.all()
+        Tests.runAll None
+        Pack.pack()
+        Release.release(a)
+
     | "develop" :: _ ->
         // Placeholder for develop command
         printfn "Develop command is not implemented yet."
