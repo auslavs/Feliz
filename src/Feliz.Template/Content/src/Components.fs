@@ -1,44 +1,39 @@
 namespace App
 
 open Feliz
-open Feliz.Router
+
+module ComponentsHelper =
+
+    open Fable.Core
+    open Fable.Core.JsInterop
+
+    let Logo: string = importDefault "./img/felizlogo.svg"
 
 type Components =
-    /// <summary>
-    /// The simplest possible React component.
-    /// Shows a header with the text Hello World
-    /// </summary>
-    [<ReactComponent>]
-    static member HelloWorld() = Html.h1 "Hello World"
 
     /// <summary>
     /// A stateful React component that maintains a counter
     /// </summary>
     [<ReactComponent>]
     static member Counter() =
-        let (count, setCount) = React.useState(0)
-        Html.div [
-            Html.h1 count
-            Html.button [
-                prop.onClick (fun _ -> setCount(count + 1))
-                prop.text "Increment"
-            ]
-        ]
+        let (count, setCount) = React.useState (0)
 
-    /// <summary>
-    /// A React component that uses Feliz.Router
-    /// to determine what to show based on the current URL
-    /// </summary>
-    [<ReactComponent>]
-    static member Router() =
-        let (currentUrl, updateUrl) = React.useState(Router.currentUrl())
-        React.router [
-            router.onUrlChanged updateUrl
-            router.children [
-                match currentUrl with
-                | [ ] -> Html.h1 "Index"
-                | [ "hello" ] -> Components.HelloWorld()
-                | [ "counter" ] -> Components.Counter()
-                | otherwise -> Html.h1 "Not found"
+        Html.div [
+            prop.className "flex min-h-screen bg-gray-100"
+            prop.children [
+                Html.div [
+                    prop.className "container flex flex-col gap-2 [&_h1]:text-4xl items-center mx-auto pt-12"
+                    prop.children [
+                        Html.img [ prop.src ComponentsHelper.Logo; prop.className "w-48 h-48" ]
+                        Html.h1 [ prop.testId "counter-display"; prop.text count ]
+                        Html.button [
+                            prop.testId "inc-btn"
+                            prop.className
+                                "rounded bg-blue-500 text-white px-4 py-2 shadow cursor-pointer hover:bg-blue-600 transition-colors active:scale-95 text-lg"
+                            prop.onClick (fun _ -> setCount (count + 1))
+                            prop.text "Increment"
+                        ]
+                    ]
+                ]
             ]
         ]

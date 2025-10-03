@@ -4,5 +4,7 @@ open Feliz
 open App
 open Browser.Dom
 
-let root = ReactDOM.createRoot(document.getElementById "feliz-app")
-root.render(Components.Counter())
+Fable.Core.JsInterop.importSideEffects "./tailwind.css"
+
+let root = ReactDOM.createRoot (document.getElementById "feliz-app")
+root.render (Components.Counter())

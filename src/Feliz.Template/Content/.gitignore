@@ -202,5 +202,6 @@ out
 .fable
 .vs
 .ionide
-*.fs.js
-*.fs.js.map
+*.fs.jsx
+*.fs.jsx.map
+fable_modules/

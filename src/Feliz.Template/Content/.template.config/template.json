@@ -1,8 +1,7 @@
 {
-    "author": "Zaid Ajaj",
+    "author": "Zaid Ajaj; Kevin Frey",
     "classifications": [
         "Fable",
-        "Elmish",
         "React"
     ],
     "name": "Feliz template",

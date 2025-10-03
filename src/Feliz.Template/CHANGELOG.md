@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 5.0.0-rc.1 - 2025-10-03
+
+### Changed
+
+- Update to latest Feliz version
+
 ## 4.5.0 - 2023-03-21
 
 ### Added
