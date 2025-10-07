@@ -165,7 +165,7 @@ const config: Config = {
     prism: {
       theme: prismThemes.oneLight,
       darkTheme: prismThemes.vsDark,
-      additionalLanguages: ['fsharp', "bash"],
+      additionalLanguages: ['fsharp', "bash", "diff"],
     },
   } satisfies Preset.ThemeConfig,
 };

@@ -1,0 +1,330 @@
+---
+title: Getting Started
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Feliz is a streamlined wrapper around the React API. You can use it either as standalone library or use the Feliz template to get started quickly.
+
+## Install pre-requisites
+
+You'll need to install the following pre-requisites to use Feliz.
+
+1. [.NET SDK](https://dotnet.microsoft.com/en-us/download) - You need to have the .NET SDK installed.
+2. [Node.js](https://nodejs.org/en/download/) - You need to have Node.js installed. This will also install npm which is the package manager used to install JavaScript packages.
+3. IDE with F# support. My personal recommendation is [Visual Studio Code](https://code.visualstudio.com/) with the [Ionide-fsharp](https://marketplace.visualstudio.com/items?itemName=Ionide.Ionide-fsharp) extension.
+
+Verify installation by running the following commands in your terminal
+
+```bash
+dotnet --version
+node --version
+npm --version
+```
+
+## Template [![Nuget](https://img.shields.io/nuget/v/Feliz.Template.svg?maxAge=0&colorB=brightgreen)](https://www.nuget.org/packages/Feliz.Template)
+
+The Feliz template is a dotnet template that can be installed using the following command
+
+```bash
+dotnet new -i Feliz.Template
+```
+
+:::info
+Remember to update the template every once in a while especially before you scaffold a new project so that you get the latest updates from the template.
+:::
+
+After installing the latest version of the template, you can create a new project using
+
+```bash
+dotnet new feliz -n AwesomeApp
+```
+
+Now you are good to go. This will scaffold the application inside the newly created AwesomeApp directory! 🎉
+
+The Feliz Template has the following features:
+
+- Uses Vite as the build tool
+- Uses Vitest as testing framework
+- Uses Tailwind CSS for styling with vs code extension for autocomplete in f# files.
+- Uses Fantomas for code formatting with vs code settings to run on save
+- .NET central package management using Directory.Packages.props and Directory.Build.props to make splitting into multiple projects easier in the future.
+- .editorconfig file to maintain consistent coding styles between different editors and IDEs.
+
+## Add Feliz to an existing project [![Nuget](https://img.shields.io/nuget/v/Feliz.svg?maxAge=0&colorB=brightgreen)](https://www.nuget.org/packages/Feliz)
+
+To use Feliz you have to install the .NET dependency as well as the correct JavaScript dependencies for React. You can do this manually or automatically using [Femto](../ecosystem/Tools/Femto.mdx).
+
+### Automatically
+
+Requires [Femto](../ecosystem/Tools/Femto.mdx) installed locally or globally.
+
+Run the following command in your project directory
+
+```bash
+# Global
+femto install Feliz
+
+# local
+dotnet femto install Feliz
+```
+
+### Manually
+
+1. Install .NET Feliz package via nuget.
+
+    <Tabs defaultValue='PackageReference'>
+
+    <TabItem value="CLI" label=".NET CLI">
+    ```
+    dotnet add package Feliz
+    ```
+    </TabItem>
+
+    <TabItem value="PackageReference" label="PackageReference">
+    ```bash title="Project file"
+    <PackageReference Include="Feliz" Version="2.9.0" />
+    ```
+    </TabItem>
+
+    <TabItem value="CPM" label="CPM">
+    ```bash title="Directory.Packages.props"
+    <PackageVersion Include="Feliz" Version="2.9.0" />
+    ```
+
+    ```bash title="Project file"
+    <PackageReference Include="Feliz" />
+    ```
+    </TabItem>
+
+    <TabItem value="PaketCLI" label="Paket CLI">
+    ```bash
+    paket add Feliz
+    ```
+    </TabItem>
+
+    <TabItem value="Script" label="Script & Interactive">
+    ```fsharp
+    #r "nuget: Feliz"
+    ```
+    </TabItem>
+
+    </Tabs>
+
+    :::info
+    Go to the [nuget](https://www.nuget.org/packages/Feliz/latest) page to find the latest versions and installation methods
+    :::
+
+2. Install JavaScript dependencies via npm or yarn
+
+```bash
+npm install react react-dom
+```
+
+## From Scratch
+This will be more in the style of a follow along than a raw description.
+
+:::info
+This was done with version `@8.0.2`, if you want to use `@latest` there might be changes to the workflow below
+:::
+
+1. Install via build tool, in this case we will use Vite. Install build tool if required.
+
+    ```bash
+    npm create vite@8.0.2 .
+    ```
+
+    1. Use Package name of your choice
+    2. Select "React" framework
+    3. Select "JavaScript" variant
+    4. Select "No" for rolldown
+    5. Select "No" for install and start (or "Yes" and just cancel)
+
+2. Delete JavaScript files and dependencies:
+
+  - Files in `./src/` folder
+  - `eslint.config.js`, as we will write f#
+  - `eslint` and `types` dependencies in `package.json`
+
+    ```diff
+    "devDependencies": {
+    -  "@eslint/js": "^9.36.0",
+    -  "@types/react": "^19.1.16",
+    -  "@types/react-dom": "^19.1.9",
+      "@vitejs/plugin-react": "^5.0.4",
+    -  "eslint": "^9.36.0",
+    -  "eslint-plugin-react-hooks": "^5.2.0",
+    -  "eslint-plugin-react-refresh": "^0.4.22",
+      "globals": "^16.4.0",
+      "vite": "^7.1.7"
+    }
+    ```
+
+  - "lint" Script
+
+    ```diff
+    "scripts": {
+      "dev": "vite",
+      "build": "vite build",
+    -  "lint": "eslint .",
+      "preview": "vite preview"
+    },
+    ```
+
+3. Init .NET tools and install fable
+
+```bash
+dotnet new tool-manifest
+```
+
+Will create a `./config/dotnet-tools.json` file
+
+```bash
+dotnet tool install fable
+```
+
+Install Fable locally in `./config/dotnet-tools.json`. 
+
+Ensure installation with
+
+```bash
+dotnet fable --version
+```
+
+4. Init F# project (and solution)
+
+```bash
+dotnet new console -lang F# -o src -n AwesomeApp
+```
+
+:::info
+You can specify framework with `-f net8.0`. This was done using .NET 8
+:::
+
+**Optional** Create solution file and add project to it. This is useful if you plan to add more projects in the future. You can build and restore multiple projects at once with a sln file.
+
+```bash
+dotnet new sln -n AwesomeApp
+```
+
+```bash
+dotnet sln add src/AwesomeApp.fsproj
+```
+
+5. Add Feliz dependency to F# project `src/AwesomeApp.fsproj`
+
+Check existing versions and installation methods on [nuget](https://www.nuget.org/packages/Feliz/latest)
+
+```bash
+dotnet add ./src/AwesomeApp.fsproj package Feliz
+```
+
+This will create a new xml `<PackageReference>` entry in the project file.
+
+```xml
+<ItemGroup>
+  <PackageReference Include="Feliz" Version="2.9.0" />
+</ItemGroup>
+```
+
+:::info
+Instead of running the console command you can also add the `<PackageReference>` entry manually to the project file.
+:::
+
+6. Create Minimal Feliz app
+
+F# requires its source file to be listed in the project file. Open `src/AwesomeApp.fsproj` and add another file to it:
+
+```xml
+<ItemGroup>
+  <Compile Include="Components.fs" />
+  <Compile Include="Program.fs" />
+</ItemGroup>
+```
+
+:::danger
+The order of the `<Compile>` entries matters. F# compiles top-to-bottom in this list. Ensure that `Components.fs` is listed before `Program.fs` as we will use components defined in `Components.fs` inside `Program.fs`.
+:::
+
+Next create the actual file `src/Components.fs` and update the content of the f# files:
+
+```fsharp title="src/Components.fs"
+namespace App
+
+open Feliz
+
+type Components =
+
+    [<ReactComponent>]
+    static member Counter() = 
+        let (count, setCount) = React.useState(0)
+        Html.div [
+            Html.h1 $"Count: {count}"
+            Html.button [
+                prop.onClick (fun _ -> setCount(count + 1))
+                prop.text "Increment"
+            ]
+        ]
+```
+
+```fsharp title="src/Program.fs"
+open Feliz
+open Fable.Core
+
+/// "root" must match the `id` in ./index.html
+let reactRoot = ReactDOM.createRoot(Browser.Dom.document.getElementById("root"))
+
+reactRoot.render(App.Components.Counter())
+```
+
+7. Update `index.html` to load the fable output.
+
+```html
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/fableoutput/Program.fs.jsx"></script>
+</body>
+```
+
+8. Add transpile scripts to `package.json`
+
+```json
+"scripts": {
+    "fable": "dotnet fable src/AwesomeApp.fsproj -o src/fableoutput/ -e fs.jsx",
+    "dev": "npm run fable -- --watch --run vite",
+    "build": "npm run fable -- --run vite build",
+    "preview": "vite preview"
+  },
+```
+
+- `npm run fable` will transpile the f# code to javascript
+    - `src/AwesomeApp.fsproj` the target project
+    - `-o src/fableoutput/` the output directory
+    - `-e fs.jsx` the file extension to use for the output files
+- `npm run dev` will run the fable command in watch mode and start vite
+
+9. Update .gitignore to ignore fable output
+
+There are some cases in which you might want to keep the generated files in source control, but in most cases you want to ignore them.
+
+Update the `.gitignore` file to include the fable output directory and remove ignore on `*.sln` files to keep F# solution files in source control.
+
+```diff
+# ..
+*.njsproj
+- *.sln
+*.sw?
++ **/fableoutput/
+```
+
+10. Done! 🎉
+
+F# files will be transpiled to javascript into `src/fableoutput/`. The F# entrypoint is `src/Program.fs` which will be transpiled to `src/fableoutput/Program.fs.jsx` and loaded in `index.html`.
+
+This will be picked up by vite and served to the browser!
+
+
+
+

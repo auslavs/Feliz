@@ -1,53 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Description>A fresh retake of the React API in Fable, optimized for happiness</Description>
-    <PackageTags>fsharp;fable;react;html</PackageTags>
-    <Authors>Zaid Ajaj; FreymaurerK</Authors>
-    <Version>3.0.0-rc.1</Version>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <Compile Include="Types.fs" />
-    <Compile Include="Helpers.fs" />
-    <Compile Include="Key.fs" />
-    <Compile Include="StyleTypes.fs" />
-    <Compile Include="ReactTypes.fs" />
-    <Compile Include="DateParsing.fs" />
-    <Compile Include="Interop.fs" />
-    <Compile Include="Colors.fs" />
-    <Compile Include="Fonts.fs" />
-    <Compile Include="Transform.fs" />
-    <Compile Include="Length.fs" />
-    <Compile Include="Properties.fs" />
-    <Compile Include="BorderStyle.fs" />
-    <Compile Include="TextDecorationStyle.fs" />
-    <Compile Include="TextDecorationLine.fs" />
-    <Compile Include="TransitionProperty.fs" />
-    <Compile Include="TransitionTimingFunction.fs" />
-    <Compile Include="TransformOrigin.fs" />
-    <Compile Include="GridTypes.fs" />
-    <Compile Include="Styles.fs" />
-    <Compile Include="React.fs" />
-    <Compile Include="ReactDOM.fs" />
-    <Compile Include="Svg.fs" />
-    <Compile Include="Html.fs" />
-    <Compile Include="JSX.fs" />
-    <Compile Include="Internal.fs" />
-  </ItemGroup>
+    <PropertyGroup>
+        <Description>A fresh retake of the React API in Fable, optimized for happiness</Description>
+        <PackageTags>fsharp;fable;react;html</PackageTags>
+        <Authors>Zaid Ajaj; FreymaurerK</Authors>
+        <Version>3.0.0-rc.1</Version>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="*.fsproj; *.fs; *.js;" Exclude="**\*.fs.js" PackagePath="fable\" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\Feliz.CompilerPlugins\Feliz.CompilerPlugins.fsproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Fable.Core" />
-    <PackageReference Include="Fable.React.Types" />
-    <PackageReference Include="Fable.ReactDom.Types" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Types.fs" />
+        <Compile Include="Helpers.fs" />
+        <Compile Include="Key.fs" />
+        <Compile Include="StyleTypes.fs" />
+        <Compile Include="ReactTypes.fs" />
+        <Compile Include="DateParsing.fs" />
+        <Compile Include="Interop.fs" />
+        <Compile Include="Colors.fs" />
+        <Compile Include="Fonts.fs" />
+        <Compile Include="Transform.fs" />
+        <Compile Include="Length.fs" />
+        <Compile Include="Properties.fs" />
+        <Compile Include="BorderStyle.fs" />
+        <Compile Include="TextDecorationStyle.fs" />
+        <Compile Include="TextDecorationLine.fs" />
+        <Compile Include="TransitionProperty.fs" />
+        <Compile Include="TransitionTimingFunction.fs" />
+        <Compile Include="TransformOrigin.fs" />
+        <Compile Include="GridTypes.fs" />
+        <Compile Include="Styles.fs" />
+        <Compile Include="React.fs" />
+        <Compile Include="ReactDOM.fs" />
+        <Compile Include="Svg.fs" />
+        <Compile Include="Html.fs" />
+        <Compile Include="JSX.fs" />
+        <Compile Include="Internal.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="*.fsproj; *.fs; *.js;" Exclude="**\*.fs.js" PackagePath="fable\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Feliz.CompilerPlugins\Feliz.CompilerPlugins.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Fable.Core" />
+        <PackageReference Include="Fable.React.Types" />
+        <PackageReference Include="Fable.ReactDom.Types" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <NpmDependencies>
+            <NpmPackage Name="react" Version="gte 19.0.0 lt 20.0.0" ResolutionStrategy="Max" />
+            <NpmPackage Name="react-dom" Version="gte 19.0.0 lt 20.0.0" ResolutionStrategy="Max" />
+        </NpmDependencies>
+    </PropertyGroup>
 </Project>
