@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 5.0.0-rc.3 - 2025-10-03
+
+### Changed
+
+- update `dotnet fable` command to use `--verbose` flag to fix freezing issue with vite: [Fable #3631](https://github.com/fable-compiler/Fable/issues/3631)
+
 ## 5.0.0-rc.2 - 2025-10-03
 
 ### Added

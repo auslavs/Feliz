@@ -2,7 +2,7 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "transpile": "dotnet fable src -e fs.jsx",
+    "transpile": "dotnet fable src -e fs.jsx --verbose",
     "start": "npm run transpile -- --watch --runFast vite",
     "build": "npm run transpile && vite build",
     "clean": "dotnet fable clean src --yes",
