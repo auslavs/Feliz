@@ -5,15 +5,44 @@ sidebar_position: 4
 toc_max_heading_level: 4
 ---
 
-> Assumes version v7.9.4 of `create-react-router`
+import ComponentRender from '@site/src/components/ComponentRender';
+import CodeBlock from '@theme/CodeBlock';
+
+:::info[React Router]
+[React Router](https://reactrouter.com/home) is a multi-strategy router for React bridging the gap from React 18 to React 19. You can use it maximally as a React framework or as minimally as you want.
+
+The follow along was done using "create-react-router": "^7.9.4",
+:::
+
+In this guide we will walk through the steps needed to migrate a React Router app created with `create-react-router` to use Fable and Feliz. It should point towards common patterns and practices using F# in existing JavaScript frameworks.
 
 ## Initialize Template 
+
+For this example we will use the "framework" mode for React Router, which can be initialized as a template using `create-react-router`.
 
 ```bash
 npx create-react-router@7.9.4 .
 ```
 
 This scaffolds a new React Router app in the current folder (the trailing `.` means "here").
+
+We start with a minimal React Router app with the following structure:
+
+```
+.
+├── app
+│   ├── routes                # folder for route modules
+│   │   └── home.tsx          # home route module
+│   ├── welcome
+│   │   └── welcome.tsx       # welcome component
+│   ├── root.tsx              # root route module
+│   ├── routes.tsx            # route config
+│   └── app.css
+├── react-router.config.ts
+├── package.json
+├── tsconfig.json
+└── ...
+```
 
 ## Install Fable
 
