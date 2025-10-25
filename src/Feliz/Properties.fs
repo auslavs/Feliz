@@ -1793,11 +1793,11 @@ type prop =
     static member inline testId(value: string) = PropHelper.mkAttr "data-testid" value
 
     /// Defines the text content of the element. Alias for `children [ Html.text value ]`
-    static member inline text (value: float) = PropHelper.mkAttr "children" value
+    static member inline text (value: float) = PropHelper.mkAttr "children" [value]
     /// Defines the text content of the element. Alias for `children [ Html.text value ]`
-    static member inline text (value: int) = PropHelper.mkAttr "children" value
+    static member inline text (value: int) = PropHelper.mkAttr "children" [value]
     /// Defines the text content of the element. Alias for `children [ Html.text value ]`
-    static member inline text (value: string) = PropHelper.mkAttr "children" value
+    static member inline text (value: string) = PropHelper.mkAttr "children" [value]
 
     /// Defines the text content of the element. Alias for `children [ Html.text (sprintf ...) ]`
     static member inline textf fmt = Printf.kprintf prop.text fmt

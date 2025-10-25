@@ -13,30 +13,28 @@ module HtmlHelper =
         ReactLegacy.createElement(tag, children = children)
 
     /// Iterates once, returns (firstMatch, restWithoutMatch).
-    let tryExtractFirst (predicate: 'T -> bool) (xs: 'T list) : ('T option * 'T list) =
-        let rec loop acc = function
-            | [] -> None, List.rev acc
-            | x::xs when predicate x ->
-                Some x, List.rev acc @ xs
-            | x::xs ->
-                loop (x::acc) xs
-        loop [] xs
+    let extractByKeyFast (key: string) (arr: seq<(string * obj)>) : (string * obj)[] * (string * obj) option =
+        Fable.Core.JsInterop.emitJsStatement (arr, key) """const arrNext_ = Array.from($0);
+            for (let i = 0; i < arrNext_.length; i++) {
+            if (arrNext_[i][0] === $1) {
+            const item = arrNext_[i];
+            arrNext_[i] = arrNext_[arrNext_.length - 1]; // overwrite with last
+            arrNext_.pop(); // remove last
+            return [arrNext_, item]; // extracted tuple
+            }
+        }
+        return [arrNext_, null]; // return full arr and None option for children"""
 
     let createElement (name: string) (props: IReactProperty list) : ReactElement =
-        match unbox<(string*obj) list> props |> tryExtractFirst (fun (key, _) -> key = "children") with
-        | Some (_, children), props when not (Interop.isString children) && Interop.isIterable children ->
+        
+        match unbox<(string*obj) list> props |> extractByKeyFast "children" with
+        | props, Some (_, children) ->
             ReactLegacy.createElement(
                 name, 
                 Fable.Core.JsInterop.createObj props,
                 unbox<ReactElement list> children
             )
-        | Some (_, children), props ->
-            ReactLegacy.createElement(
-                name, 
-                Fable.Core.JsInterop.createObj props,
-                unbox<ReactElement> children
-            )
-        | None, props -> 
+        | props, None ->
             ReactLegacy.createElement(
                 name,
                 Fable.Core.JsInterop.createObj props

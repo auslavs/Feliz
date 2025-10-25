@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="package.json" />
+    <Compile Include="ExtractChildren.test.fs" />
     <Compile Include="CodeSplitting.fs" />
     <Compile Include="PropHelpers.test.fs" />
     <Compile Include="Legacy.fs" />
