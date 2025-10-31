@@ -10,31 +10,31 @@
 
     <ItemGroup>
         <Compile Include="Types.fs" />
-        <Compile Include="Helpers.fs" />
-        <Compile Include="Key.fs" />
-        <Compile Include="StyleTypes.fs" />
-        <Compile Include="ReactTypes.fs" />
-        <Compile Include="DateParsing.fs" />
-        <Compile Include="Interop.fs" />
-        <Compile Include="Colors.fs" />
-        <Compile Include="Fonts.fs" />
-        <Compile Include="Transform.fs" />
-        <Compile Include="Length.fs" />
-        <Compile Include="Properties.fs" />
-        <Compile Include="BorderStyle.fs" />
-        <Compile Include="TextDecorationStyle.fs" />
-        <Compile Include="TextDecorationLine.fs" />
-        <Compile Include="TransitionProperty.fs" />
-        <Compile Include="TransitionTimingFunction.fs" />
-        <Compile Include="TransformOrigin.fs" />
-        <Compile Include="GridTypes.fs" />
+        <Compile Include="Helper\Helpers.fs" />
+        <Content Include="Helper\Helpers.fs" />
+        <Compile Include="Helper\DateParsing.fs" />
+        <Content Include="StringEnums\Colors.fs" />
+        <Content Include="StringEnums\Fonts.fs" />
+        <Content Include="StringEnums\Locale.fs" />
+        <Compile Include="StyleHelper\StyleTypes.fs" />
+        <Compile Include="StyleHelper\Length.fs" />
+        <Content Include="StyleHelper\BorderStyle.fs" />
+        <Content Include="StyleHelper\GridTypes.fs" />
+        <Content Include="StyleHelper\TextDecorationLine.fs" />
+        <Content Include="StyleHelper\TextDecorationStyle.fs" />
+        <Content Include="StyleHelper\TransformOrigin.fs" />
+        <Content Include="StyleHelper\TransitionProperty.fs" />
+        <Content Include="StyleHelper\TransitionTimingFunction.fs" />
+        <Compile Include="StyleHelper\Transform.fs" />
         <Compile Include="Styles.fs" />
-        <Compile Include="React.fs" />
-        <Compile Include="ReactDOM.fs" />
+        <Compile Include="PropertyHelper\Key.fs" />
+        <Compile Include="Properties.fs" />
+        <Compile Include="React\ReactTypes.fs" />
+        <Compile Include="React\React.fs" />
+        <Compile Include="React\ReactDOM.fs" />
         <Compile Include="Svg.fs" />
         <Compile Include="Html.fs" />
         <Compile Include="JSX.fs" />
-        <Compile Include="Internal.fs" />
     </ItemGroup>
 
     <ItemGroup>
