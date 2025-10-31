@@ -6410,3 +6410,41 @@ module style =
         /// Depends on the user agent. Desktop browsers (including Firefox)
         /// use a default value of roughly 1.2, depending on the element's font-family.
         static member inline normal = StyleHelper.mkStyle "lineHeight" "normal"
+
+    /// Sets the size of the font. Changing the font size also updates the sizes of
+    /// the font size-relative <length> units, such as em, ex, and so forth.
+    /// https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
+    [<Erase>]
+    type fontSize =
+        /// Absolute-size keyword, based on the user's default font size (which is medium).
+        static member inline xxSmall = StyleHelper.mkStyle "fontSize" "xx-small"
+        /// Absolute-size keyword, based on the user's default font size (which is medium).
+        static member inline xSmall = StyleHelper.mkStyle "fontSize" "x-small"
+        /// Absolute-size keyword, based on the user's default font size (which is medium).
+        static member inline small = StyleHelper.mkStyle "fontSize" "small"
+        /// Absolute-size keyword, based on the user's default font size (which is medium).
+        static member inline medium = StyleHelper.mkStyle "fontSize" "medium"
+        /// Absolute-size keyword, based on the user's default font size (which is medium).
+        static member inline large = StyleHelper.mkStyle "fontSize" "large"
+        /// Absolute-size keyword, based on the user's default font size (which is medium).
+        static member inline xLarge = StyleHelper.mkStyle "fontSize" "x-large"
+        /// Absolute-size keyword, based on the user's default font size (which is medium).
+        static member inline xxLarge = StyleHelper.mkStyle "fontSize" "xx-large"
+        /// Absolute-size keyword, based on the user's default font size (which is medium).
+        static member inline xxxLarge = StyleHelper.mkStyle "fontSize" "xxx-large"
+        /// Relative-size keyword. The font will be smaller relative to the parent
+        /// element's font size, roughly by the ratio used to separate the
+        /// absolute-size keywords.
+        static member inline smaller = StyleHelper.mkStyle "fontSize" "smaller"
+        /// Relative-size keyword. The font will be larger relative to the parent
+        /// element's font size, roughly by the ratio used to separate the
+        /// absolute-size keywords.
+        static member inline larger = StyleHelper.mkStyle "fontSize" "larger"
+        /// Scaling rules are applied when determining the computed value of
+        /// the font-size property for math elements relative to the font-size
+        /// of the containing parent.
+        /// See the math-depth property for more information:
+        /// https://developer.mozilla.org/en-US/docs/Web/CSS/math-depth
+        static member inline math = StyleHelper.mkStyle "fontSize" "math"
+        /// Inherits this property from its parent element.
+        static member inline inheritFromParent = StyleHelper.mkStyle "fontSize" "inherit"

@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ✨ Added
+
+- `style.fontsize._` module with `smaller`, `larger`, ... styles. By @Linschlager #613 
+
 ### 🔄 Changed
 
 - Refactored project structure, sorting related files into dedicated folders for better organization.

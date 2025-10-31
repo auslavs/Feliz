@@ -196,3 +196,19 @@ describe "Basic Tests" <| fun _ ->
         let div = RTL.screen.getByTestId "simpleDiv"
 
         expect(div).toBeInTheDocument()
+
+describe "Tests for specific style elements" <| fun _ ->
+
+    test "style.fontsize._" <| fun _ ->
+        RTL.render(
+            Html.div [
+                prop.testId "fontSizeTest"
+                prop.style [style.fontSize.small]
+                prop.text "This is small font size"
+            ]
+        ) |> ignore
+
+        let div = RTL.screen.getByTestId "fontSizeTest"
+
+        expect(div).toBeInTheDocument()
+        expect(div).toHaveStyle("font-size: small")
