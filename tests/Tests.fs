@@ -608,6 +608,69 @@ module UseElmish =
         ])
 #endif
 
+#if FABLE_COMPILER_3 || FABLE_COMPILER_4
+module Subscriber =
+    open Elmish
+    open Feliz.UseElmish
+    open Fable.Core.JS
+
+    type Model = {
+        Count: int
+        SubscriberTicks: int
+    }
+
+    type Msg =
+        | Increment
+        | SubscriberTick
+
+    let init initialValue =
+        {
+            Count = initialValue
+            SubscriberTicks = 0
+        },
+        Cmd.none
+
+    let update msg (model: Model) =
+        match msg with
+        | Increment ->
+            { model with Count = model.Count + 1 }, Cmd.none
+        | SubscriberTick ->
+            { model with SubscriberTicks = model.SubscriberTicks + 1 }, Cmd.none
+
+    let subscribeToTimer dispatch =
+        let subscriptionId =
+            setInterval
+                (fun _ -> dispatch SubscriberTick)
+                100
+        { new System.IDisposable with member _.Dispose() = clearInterval subscriptionId }
+
+    let makeProgram initialValue =
+        Program.mkProgram (fun () -> init initialValue) update (fun _ _ -> ())
+        |> Program.withSubscription (fun _model ->
+            [ ["timer"], subscribeToTimer ])
+
+    let render = React.functionComponent(fun (props: {| initialValue: int |}) ->
+        let model, dispatch = React.useElmish((fun () -> makeProgram props.initialValue), (), [||])
+
+        Html.div [
+            Html.h1 [
+                prop.testId "count"
+                prop.text model.Count
+            ]
+
+            Html.h1 [
+                prop.testId "subscriber-ticks"
+                prop.text model.SubscriberTicks
+            ]
+
+            Html.button [
+                prop.text "Increment"
+                prop.onClick (fun _ -> dispatch Increment)
+                prop.testId "increment"
+            ]
+        ])
+#endif
+
 let felizTests = testList "Feliz Tests" [
 
     testCase "Html elements can be rendered" <| fun _ ->
@@ -1125,6 +1188,30 @@ let felizTests = testList "Feliz Tests" [
     }
 
 #if FABLE_COMPILER_3 || FABLE_COMPILER_4
+    testReactAsync "Elmish subscriptions work correctly" <| async {
+        let render = RTL.render(Subscriber.render {| initialValue = 0 |})
+
+        Expect.equal (render.getByTestId("count").innerText) "0" "Should start with initial count"
+        Expect.equal (render.getByTestId("subscriber-ticks").innerText) "0" "Should start with 0 subscriber ticks"
+
+        // Wait for subscriber to tick a few times
+        do! Async.Sleep 350
+
+        do!
+            RTL.waitFor <| fun () ->
+                let ticks = render.getByTestId("subscriber-ticks").innerText |> int
+                Expect.isTrue (ticks >= 3) "Subscriber should have ticked at least 3 times"
+            |> Async.AwaitPromise
+
+        // Click increment button
+        render.getByTestId("increment").click()
+
+        do!
+            RTL.waitFor <| fun () ->
+                Expect.equal (render.getByTestId("count").innerText) "1" "Count should have been incremented"
+            |> Async.AwaitPromise
+    }
+
     testReactAsync "useElmish works" <| async {
         let render = RTL.render(UseElmish.render {| subtitle = "foo" |})
 
