@@ -166,7 +166,7 @@ module Tests =
             printGreenfn "Running tests in %s" folderName
             runNpmTest folder
             printGreenfn "Finished running tests in %s" folderName
-        let netTestFolders = findValidNETTestFolders TestRoot filteropt
+        let netTestFolders = findValidNETTestFolders TestRoot filteropt |> Array.except npmTestFolders
         for folder in netTestFolders do
             let folderName = Path.GetFileName(folder)
             printGreenfn "Running tests in %s" folderName
